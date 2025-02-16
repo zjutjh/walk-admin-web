@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Home from "../pages/home/index.vue";
 import Login from '../pages/Login/index.vue'; // 导入登录页面
 
 // 定义路由
@@ -6,7 +7,7 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: () => import('../pages/home/index.vue')
+        component: Home
     },
     {
         path: '/login',

@@ -19,6 +19,7 @@
         <button
           type="submit"
           class="w-full bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600"
+          @click="login"
         >
           登录
         </button>
@@ -29,15 +30,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import router from '../../router';
+import useMainStore from '../../store';
 
-const secret = ref();
+const certificationStore = useMainStore().useCertificationStore();
+const secret = ref('');
 
 const login = () => {
-  
-}
-
+  certificationStore.setSecret = secret;
+  router.push("/");
+};
 </script>
-
-<style scoped>
-/* 这里可以添加样式 */
-</style> 
