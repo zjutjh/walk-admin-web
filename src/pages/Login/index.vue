@@ -13,6 +13,7 @@
             id="key"
             class="mt-1 block w-full border border-gray-300 rounded-md p-2"
             placeholder="请输入密钥"
+            v-model="secret"
           />
         </div>
         <button
@@ -27,7 +28,14 @@
 </template>
 
 <script setup lang="ts">
-// 这里可以添加相关的逻辑
+import { ref } from 'vue';
+
+const secret = ref();
+
+const login = () => {
+  
+}
+
 </script>
 
 <style scoped>
