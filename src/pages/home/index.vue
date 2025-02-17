@@ -23,8 +23,7 @@ import { NButton } from 'naive-ui';
 import router from '../../router';
 
 const viewList = () => {
-  // 处理查看名单的逻辑
-  console.log('查看名单');
+  router.push("/list");
 };
 
 const viewRoute = () => {
