@@ -21,7 +21,14 @@
 
     <div class="flex-1 p-4 mx-8 relative">
         <h2 class="text-2xl font-bold mb-4">信息表格</h2>
-        <n-table :columns="columns" :data="tableData" />
+        <div v-for="table in tableData">
+          <div class="font-bold text-lg">{{ table.point + ":" + table.location }}</div>
+          <n-data-table
+            :columns="columns"
+            :data="table.users"
+            :row-class-name="retrans"
+          />
+        </div>
 
         <n-button
             type="default"
@@ -34,11 +41,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { NButton, NForm, NInput, NSelect, NTable, NFlex } from 'naive-ui';
+import { NButton, NForm, NInput, NSelect, NTable, NFlex, useMessage, NDataTable } from 'naive-ui';
 import router from '../../router';
 import { useRequest } from 'vue-hooks-plus'
-import { getTimeoutListAPI } from '../../apis';
+import { getTimeoutListAPI, getTimeoutListFileAPI } from '../../apis';
+import type { RowData } from 'naive-ui/es/data-table/src/interface';
 
+const msg = useMessage();
 const time = ref('');
 const route = ref();
 const type = ref();
@@ -59,37 +68,117 @@ const typeOptions = [
 ];
 
 const columns = [
-  { title: '时间', key: 'time' },
-  { title: '路线', key: 'route' },
-  { title: '类型', key: 'type' },
-  { title: '密钥', key: 'secret' },
+  { title: '姓名', key: 'name' },
+  { title: '性别', key: 'gender' },
+  { title: '学号', key: 'stu_id' },
+  { title: '校区', key: 'campus' },
+  { title: '学院', key: 'college' },
+  { title: '电话', key: 'tel' },
+  // { title: '类型', key: 'type' },
+  { title: '到达上一点位时间', key: 'time' },
+  { title: '点位', key: 'point' },
+  { title: '队伍id', key: 'team_id' },
+  { title: '队伍名称', key: 'team_name' },
+  { title: '团队状态', key: 'status' },
+  { title: '用户状态', key: 'walk_status' },
 ];
 
-const tableData = ref([]);
+const tableData = ref();
+
+const getData = () => {
+  if(time.value >= 0 && route!=undefined && type.value!=undefined && secret!='') {
+    return {
+      minute: +time.value,
+      route: route.value,
+      type: type.value,
+      secret: secret.value,
+    }
+  } else {
+    msg.warning("请先填写相关信息");
+    return false;
+  }
+}
 
 const submitForm = () => {
-  // 处理表单提交逻辑
-  const Data = {
-    minute: +time.value,
-    route: route.value,
-    type: type.value,
-    secret: secret.value,
-  };
-
-  console.log(Data)
+  const Data = getData();
+  if(!Data) return;
 
   useRequest(() => getTimeoutListAPI(Data),{
     onSuccess(res) {
-      console.log(res);
+      tableData.value = res.data.results;
+      console.log(tableData.value);
     }
   })
 };
 
 const getListFile = () => {
-    
+  const Data = getData();
+  if(!Data) return;
+
+  useRequest(() => getTimeoutListFileAPI(Data),{
+    onSuccess(res) {
+      const url = res.data.url;
+      window.open(url, '_blank');
+    }
+  })
 };
 
 const goBack = () => {
   router.push('/'); // 返回主页
 };
+
+const retrans = (row: RowData) => {
+  switch(row.campus){
+    case 1:
+    row.campus = "朝晖";
+    break;
+    case 2:
+    row.campus = "屏峰";
+    break;
+    case 3:
+    row.campus = "莫干山";
+    break;
+    default:
+      break;
+  }
+  switch(row.status){
+    case 1:
+    row.status = "未开始";
+    break;
+    case 2:
+    row.status = "进行中";
+    break;
+    case 3:
+    row.status = "未完成";
+    break;
+    case 4:
+    row.status = "完成";
+    break;
+    case 5:
+    row.status = "扫码成功";
+    break;
+    default:
+      break;
+  }
+  switch(row.walk_status){
+    case 1:
+    row.walk_status = "未开始";
+    break;
+    case 2:
+    row.walk_status = "进行中";
+    break;
+    case 3:
+    row.walk_status = "扫码成功";
+    break;
+    case 4:
+    row.walk_status = "放弃";
+    break;
+    case 5:
+    row.walk_status = "完成";
+    break;
+    default:
+      break;
+  }
+}
+
 </script>
