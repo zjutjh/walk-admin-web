@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { NButton, NForm, NInput, NSelect, NTable, NFlex, useMessage, NDataTable } from 'naive-ui';
+import { NButton, NInput, NSelect, NFlex, useMessage, NDataTable } from 'naive-ui';
 import router from '../../router';
 import { useRequest } from 'vue-hooks-plus'
 import { getTimeoutListAPI, getTimeoutListFileAPI } from '../../apis';
@@ -86,7 +86,7 @@ const columns = [
 const tableData = ref();
 
 const getData = () => {
-  if(time.value >= 0 && route!=undefined && type.value!=undefined) {
+  if(+time.value >= 0 && route!=undefined && type.value!=undefined) {
     return {
       minute: +time.value,
       route: route.value,
@@ -104,7 +104,7 @@ const submitForm = () => {
   if(!Data) return;
 
   useRequest(() => getTimeoutListAPI(Data),{
-    onSuccess(res) {
+    onSuccess(res: any) {
       tableData.value = res.data.results;
     }
   })
@@ -115,7 +115,7 @@ const getListFile = () => {
   if(!Data) return;
 
   useRequest(() => getTimeoutListFileAPI(Data),{
-    onSuccess(res) {
+    onSuccess(res: any) {
       const url = res.data.url;
       window.open(url, '_blank');
     }
@@ -178,6 +178,7 @@ const retrans = (row: RowData) => {
     default:
       break;
   }
+  return undefined;
 }
 
 </script>
