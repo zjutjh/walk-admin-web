@@ -37,7 +37,7 @@ const certificationStore = useMainStore().useCertificationStore();
 const secret = ref('');
 
 const login = () => {
-  certificationStore.setSecret = secret;
+  certificationStore.setSecret(secret.value);
   router.push("/");
 };
 </script>

@@ -7,7 +7,6 @@
                 <n-input v-model:value="time" placeholder="请输入逾期时间（单位：分钟）" />
                 <n-select v-model:value="route" :options="routeOptions" placeholder="选择路线" />
                 <n-select v-model:value="type" :options="typeOptions" placeholder="选择类型" />
-                <n-input v-model:value="secret" placeholder="请输入密钥" />
                 <n-button type="error" @click="submitForm">确定</n-button>
             </n-flex>
         </div>
@@ -46,12 +45,13 @@ import router from '../../router';
 import { useRequest } from 'vue-hooks-plus'
 import { getTimeoutListAPI, getTimeoutListFileAPI } from '../../apis';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
+import useMainStore from '../../store';
 
+const certificationStore = useMainStore().useCertificationStore();
 const msg = useMessage();
 const time = ref('');
 const route = ref();
 const type = ref();
-const secret = ref("");
 
 const routeOptions = [
   { label: '朝晖路线', value: 1 },
@@ -86,12 +86,12 @@ const columns = [
 const tableData = ref();
 
 const getData = () => {
-  if(time.value >= 0 && route!=undefined && type.value!=undefined && secret!='') {
+  if(time.value >= 0 && route!=undefined && type.value!=undefined) {
     return {
       minute: +time.value,
       route: route.value,
       type: type.value,
-      secret: secret.value,
+      secret: certificationStore.getSecret(),
     }
   } else {
     msg.warning("请先填写相关信息");
@@ -106,7 +106,6 @@ const submitForm = () => {
   useRequest(() => getTimeoutListAPI(Data),{
     onSuccess(res) {
       tableData.value = res.data.results;
-      console.log(tableData.value);
     }
   })
 };

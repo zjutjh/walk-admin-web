@@ -32,8 +32,7 @@ const viewRoute = () => {
 };
 
 const viewTeam = () => {
-  // 处理查看队伍的逻辑
-  console.log('查看队伍');
+  router.push("/team");
 };
 
 const inputSecret = () => {
