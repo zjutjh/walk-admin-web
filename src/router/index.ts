@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from "../pages/home/index.vue";
-import Login from '../pages/Login/index.vue';
-import List from '../pages/List/index.vue';
+import Login from '../pages/login/index.vue';
+import List from '../pages/list/index.vue';
 import Team from "../pages/team/index.vue";
+import Route from "../pages/route/index.vue";
 
 // 定义路由
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
         path: '/team',
         name: 'Team',
         component: Team
+    },
+    {
+        path: '/route',
+        name: 'Route',
+        component: Route
     },
 ];
 

@@ -65,7 +65,7 @@ const columns = [
   { title: '性别', key: 'gender' },
   { title: '联系方式', key: 'contact' },
   { title: '校区', key: 'campus' },
-  { title: 'open id', key: 'open_id' },
+  // { title: 'open id', key: 'open_id' },
   { title: '类型', key: 'type' },
   { title: '状态', key: 'walk_status' },
 ];
@@ -82,7 +82,6 @@ const fetchTeamInfo = async () => {
   }), {
     onSuccess(res: any) {
       teamInfo.value = res.data;
-      console.log(teamInfo.value);
     }
   })
 };

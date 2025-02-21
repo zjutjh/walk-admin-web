@@ -27,8 +27,7 @@ const viewList = () => {
 };
 
 const viewRoute = () => {
-  // 处理查看路线的逻辑
-  console.log('查看路线');
+  router.push("/route");
 };
 
 const viewTeam = () => {
