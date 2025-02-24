@@ -4,8 +4,8 @@ import axios, { type AxiosRequestConfig } from 'axios'
 //自动存储cookie
 
 const axiosInstance = axios.create({
-  // baseURL: "/api",
-  baseURL: "/api/v1",
+  baseURL: "/api",
+  // baseURL: "/api/v1",
   timeout: 10000,
   withCredentials: true
 })
