@@ -15,7 +15,9 @@
             type="default"
             class="absolute top-4 right-4"
             @click="goBack"
-        >返回主页</n-button>
+        >返回路线统计</n-button>
+
+        <n-button type="primary" class="absolute top-4 right-36" @click="viewTeam">查看队伍</n-button>
     </div>
 
     <div class="flex-1 p-4 mx-8 relative">
@@ -62,6 +64,7 @@ const routeOptions = [
 ];
 
 const typeOptions = [
+  { label: '全部', value: 0 },
   { label: '学生', value: 1 },
   { label: '老师', value: 2 },
   { label: '校友', value: 3 },
@@ -123,7 +126,11 @@ const getListFile = () => {
 };
 
 const goBack = () => {
-  router.push('/'); // 返回主页
+  router.push('/route');
+};
+
+const viewTeam = () => {
+  router.push("/team");
 };
 
 const retrans = (row: RowData) => {

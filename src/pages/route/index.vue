@@ -34,11 +34,7 @@
       </n-table>
     </div>
 
-    <n-button
-        type="default"
-        class="absolute top-4 right-4"
-        @click="goBack"
-    >返回主页</n-button>
+    <n-button type="primary" class="absolute top-4 right-4" @click="viewList">查看名单</n-button>
   </div>
 </template>
 
@@ -64,8 +60,8 @@ onMounted(() => {
     });
 });
 
-const goBack = () => {
-    router.push('/');
+const viewList = () => {
+  router.push("/list");
 };
 
 </script>

@@ -14,7 +14,7 @@
             type="default"
             class="absolute top-4 right-4"
             @click="goBack"
-        >返回主页</n-button>
+        >返回逾期人员列表</n-button>
     </div>
 
     <!-- 信息展示部分 -->
@@ -87,7 +87,7 @@ const fetchTeamInfo = async () => {
 };
 
 const goBack = () => {
-    router.push('/');
+    router.push('/list');
 };
 
 const retrans = (row: RowData) => {

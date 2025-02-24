@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen">
     <div class="w-1/2 bg-gray-200 flex items-center justify-center">
-      <img src="../../assets/vue.svg" alt="Login Image" class="max-w-full h-auto" />
+      <img src="../../assets/JHicon.png" alt="Login Image" class="w-40" />
     </div>
     <div class="w-1/2 flex items-center justify-center">
       <form class="bg-white p-8 rounded shadow-md w-80">
@@ -38,6 +38,6 @@ const secret = ref('');
 
 const login = () => {
   certificationStore.setSecret(secret.value);
-  router.push("/");
+  router.push("/route");
 };
 </script>
