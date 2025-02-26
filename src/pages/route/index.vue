@@ -3,10 +3,14 @@
     <h1 class="text-3xl font-bold mb-4">路线信息展示</h1>
     
     <div v-if="routeData">
-      <n-table :bordered="true" :single-line="false">
+      <n-table :single-line="false">
         <thead>
             <tr>
-                <td>路线</td>
+                <th>路线</th>
+                <th>未到</th>
+                <th>起点</th>
+                <th v-for="i in maxPoint">{{ i }}</th>
+                <th>终点</th>
             </tr>
         </thead>
         <tbody>
@@ -42,12 +46,23 @@
 import { useRequest } from 'vue-hooks-plus';
 import { getRouteInfoAPI } from '../../apis';
 import useMainStore from '../../store';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import router from '../../router';
 import { NButton, NTable } from 'naive-ui';
 
 const certificationStore = useMainStore().useCertificationStore();
 const routeData = ref();
+
+const maxPoint = computed(() => {
+  let n = 0;
+  if (!routeData.value) return 0;
+  for (const route in routeData.value) {
+    if (routeData.value[route].length > n) {
+      n = routeData.value[route].length - 3;
+    }
+  }
+  return n;
+})
 
 onMounted(() => {
     useRequest(() => getRouteInfoAPI({

@@ -36,21 +36,19 @@
       <h3 class="text-xl font-semibold">队员详细信息</h3>
       <n-data-table
         :columns="columns"
-        :data="teamInfo.member"
-        :row-class-name="retrans"
+        :data="teamMemberInfo"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { NInput, NButton, useMessage, NDataTable } from 'naive-ui';
 import { useRequest } from 'vue-hooks-plus';
 import router from '../../router';
 import { getTeamInfoAPI } from '../../apis';
 import useMainStore from '../../store';
-import type { RowData } from 'naive-ui/es/data-table/src/interface';
 
 const STATUS = ["", "未开始", "进行中", "未完成", "完成", "扫码成功"];
 const ROUTE = ["", "朝晖路线", "屏峰半程", "屏峰全程", "莫干山半程", "莫干山全程"];
@@ -90,33 +88,36 @@ const goBack = () => {
     router.push('/list');
 };
 
-const retrans = (row: RowData) => {
-  switch(row.gender) {
-    case 1: row.gender = "男";break;
-    case 2: row.gender = "女";break;
-  }
-  const contact = ref("");
-  if(row.contact.qq!='') contact.value += "qq:"+row.contact.qq+"\n";
-  if(row.contact.wechat!='') contact.value += "微信:"+row.contact.wechat+"\n";
-  if(row.contact.tel!='') contact.value += "电话:"+row.contact.tel+"\n";
-  row.contact = contact.value;
-  switch(row.campus) {
-    case 1:row.campus = "朝晖";break;
-    case 2:row.campus = "屏峰";break;
-    case 3:row.campus = "莫干山";break;
-  }
-  switch(row.walk_status) {
-    case 1:row.walk_status = "未开始";break;
-    case 2:row.walk_status = "进行中";break;
-    case 3:row.walk_status = "扫码成功";break;
-    case 4:row.walk_status = "放弃";break;
-    case 5:row.walk_status = "完成";break;
-  }
-  switch(row.type) {
-    case 1: row.type = "学生";break;
-    case 2: row.type = "教师";break;
-  }
-  return undefined;
-}
+const teamMemberInfo = computed(() => {
+  const data = ref(teamInfo.value.member);
+  data.value.forEach((item: any) => {
+    switch(item.gender) {
+      case 1: item.gender = "男";break;
+      case 2: item.gender = "女";break;
+    }
+    let contact = "";
+    if(item.contact.qq!='') contact += "qq:" + item.contact.qq + "\n";
+    if(item.contact.wechat!='') contact += "微信:" + item.contact.wechat + "\n"; 
+    if(item.contact.tel!='') contact += "电话:" + item.contact.tel + "\n";
+    item.contact = contact;
+    switch(item.campus) {
+      case 1: item.campus = "朝晖";break;
+      case 2: item.campus = "屏峰";break;
+      case 3: item.campus = "莫干山";break;
+    }
+    switch(item.walk_status) {
+      case 1: item.walk_status = "未开始";break;
+      case 2: item.walk_status = "进行中";break;
+      case 3: item.walk_status = "扫码成功";break;
+      case 4: item.walk_status = "放弃";break;
+      case 5: item.walk_status = "完成";break;
+    }
+    switch(item.type) {
+      case 1: item.type = "学生";break;
+      case 2: item.type = "教师";break;
+    }
+  });
+  return data.value;
+})
 
 </script>

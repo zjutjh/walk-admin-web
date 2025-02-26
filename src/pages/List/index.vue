@@ -27,7 +27,6 @@
           <n-data-table
             :columns="columns"
             :data="table.users"
-            :row-class-name="retrans"
           />
         </div>
 
@@ -41,12 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { NButton, NInput, NSelect, NFlex, useMessage, NDataTable } from 'naive-ui';
 import router from '../../router';
 import { useRequest } from 'vue-hooks-plus'
 import { getTimeoutListAPI, getTimeoutListFileAPI } from '../../apis';
-import type { RowData } from 'naive-ui/es/data-table/src/interface';
 import useMainStore from '../../store';
 
 const certificationStore = useMainStore().useCertificationStore();
@@ -54,6 +52,7 @@ const msg = useMessage();
 const time = ref('');
 const route = ref();
 const type = ref();
+const routeData = ref();
 
 const routeOptions = [
   { label: '朝晖路线', value: 1 },
@@ -79,14 +78,51 @@ const columns = [
   { title: '电话', key: 'tel' },
   // { title: '类型', key: 'type' },
   { title: '到达上一点位时间', key: 'time' },
-  { title: '点位', key: 'point' },
+  { title: '点位', key: 'location' },
   { title: '队伍id', key: 'team_id' },
   { title: '队伍名称', key: 'team_name' },
   { title: '团队状态', key: 'status' },
   { title: '用户状态', key: 'walk_status' },
 ];
 
-const tableData = ref();
+const tableData = computed(() => {
+  const data = ref(routeData.value);
+  if(!data.value) return data.value;
+  data.value.forEach((tableData: any) => {
+    tableData.users.forEach((item: any) => {
+      switch(item.gender) {
+        case 1: item.gender = "男";break;
+        case 2: item.gender = "女";break;
+      }
+      switch(item.campus) {
+        case 1: item.campus = "朝晖";break;
+        case 2: item.campus = "屏峰";break;
+        case 3: item.campus = "莫干山";break;
+      }
+      switch(item.walk_status) {
+        case 1: item.walk_status = "未开始";break;
+        case 2: item.walk_status = "进行中";break;
+        case 3: item.walk_status = "扫码成功";break;
+        case 4: item.walk_status = "放弃";break;
+        case 5: item.walk_status = "完成";break;
+      }
+      switch(item.type) {
+        case 1: item.type = "学生";break;
+        case 2: item.type = "教师";break;
+      }
+      switch(item.status) {
+        case 1: item.status = "未开始";break;
+        case 2: item.status = "进行中";break;
+        case 3: item.status = "未完成";break;
+        case 4: item.status = "完成";break;
+        case 5: item.status = "扫码成功";break;
+      }
+      item.time = formatReadingTime(item.time);
+    });
+  });
+
+  return data.value;
+})
 
 const getData = () => {
   if(+time.value >= 0 && route!=undefined && type.value!=undefined) {
@@ -108,7 +144,7 @@ const submitForm = () => {
 
   useRequest(() => getTimeoutListAPI(Data),{
     onSuccess(res: any) {
-      tableData.value = res.data.results;
+      routeData.value = res.data.results;
     }
   })
 };
@@ -133,59 +169,16 @@ const viewTeam = () => {
   router.push("/team");
 };
 
-const retrans = (row: RowData) => {
-  switch(row.campus){
-    case 1:
-    row.campus = "朝晖";
-    break;
-    case 2:
-    row.campus = "屏峰";
-    break;
-    case 3:
-    row.campus = "莫干山";
-    break;
-    default:
-      break;
-  }
-  switch(row.status){
-    case 1:
-    row.status = "未开始";
-    break;
-    case 2:
-    row.status = "进行中";
-    break;
-    case 3:
-    row.status = "未完成";
-    break;
-    case 4:
-    row.status = "完成";
-    break;
-    case 5:
-    row.status = "扫码成功";
-    break;
-    default:
-      break;
-  }
-  switch(row.walk_status){
-    case 1:
-    row.walk_status = "未开始";
-    break;
-    case 2:
-    row.walk_status = "进行中";
-    break;
-    case 3:
-    row.walk_status = "扫码成功";
-    break;
-    case 4:
-    row.walk_status = "放弃";
-    break;
-    case 5:
-    row.walk_status = "完成";
-    break;
-    default:
-      break;
-  }
-  return undefined;
+function formatReadingTime(timestamp: string) {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 </script>
