@@ -12,10 +12,8 @@
 
 - **关于分支合并**
 
-需要更改的文件有`vite.config.ts`、`src/router/index.ts`、`src/apis/axios.ts`。
+需要更改的文件有`vite.config.ts`、`src/apis/axios.ts`。
 
-vite.config.ts： 需要关闭代理，启用base。
-
-src/router/index.ts：需要启用FRONT_URL。
+vite.config.ts： 需要关闭代理，修改base。
 
 src/apis/axios.ts：需要更改baseURL为正式环境。
