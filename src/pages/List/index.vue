@@ -1,24 +1,24 @@
 <template>
   <div class="flex flex-col h-screen">
-    <div class="flex flex-col m-8 p-4 rounded-lg shadow-md bg-white relative">
-        <h2 class="text-2xl font-bold mb-4">输入信息</h2>
-        <div>
-            <n-flex justify="end">
-                <n-input v-model:value="time" placeholder="请输入逾期时间（单位：分钟）" />
-                <n-select v-model:value="route" :options="routeOptions" placeholder="选择路线" />
-                <n-select v-model:value="type" :options="typeOptions" placeholder="选择类型" />
-                <n-button type="error" @click="submitForm">确定</n-button>
-            </n-flex>
-        </div>
+      <div class="flex flex-col m-8 p-4 rounded-lg shadow-md bg-white relative" ref="loadingBarTargetRef">
+          <h2 class="text-2xl font-bold mb-4">输入信息</h2>
+          <div>
+              <n-flex justify="end">
+                  <n-select v-model:value="time" :options="timeOptions" placeholder="请输入逾期时间（单位：分钟）" />
+                  <n-select v-model:value="route" :options="routeOptions" placeholder="选择路线" />
+                  <n-select v-model:value="type" :options="typeOptions" placeholder="选择类型" />
+                  <n-button type="error" @click="submitForm">确定</n-button>
+              </n-flex>
+          </div>
 
-        <n-button
-            type="default"
-            class="absolute top-4 right-4"
-            @click="goBack"
-        >返回路线统计</n-button>
+          <n-button
+              type="default"
+              class="absolute top-4 right-4"
+              @click="goBack"
+          >返回路线统计</n-button>
 
-        <n-button type="primary" class="absolute top-4 right-36" @click="viewTeam">查看队伍</n-button>
-    </div>
+          <n-button type="primary" class="absolute top-4 right-36" @click="viewTeam">查看队伍</n-button>
+      </div>
 
     <div class="flex-1 p-4 mx-8 relative">
         <h2 class="text-2xl font-bold mb-4">信息表格</h2>
@@ -27,6 +27,7 @@
           <n-data-table
             :columns="columns"
             :data="table.users"
+            :pagination="paginationReactive"
           />
         </div>
 
@@ -40,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { NButton, NInput, NSelect, NFlex, useMessage, NDataTable } from 'naive-ui';
+import { computed, reactive, ref } from 'vue';
+import { NButton, NSelect, NFlex, useMessage, NDataTable, useLoadingBar } from 'naive-ui';
 import router from '../../router';
 import { useRequest } from 'vue-hooks-plus'
 import { getTimeoutListAPI, getTimeoutListFileAPI } from '../../apis';
@@ -49,9 +50,10 @@ import useMainStore from '../../store';
 
 const certificationStore = useMainStore().useCertificationStore();
 const msg = useMessage();
-const time = ref('');
-const route = ref();
-const type = ref();
+const loadingBar = useLoadingBar();
+const time = ref('10');
+const route = ref(1);
+const type = ref(0);
 const routeData = ref();
 
 const routeOptions = [
@@ -69,6 +71,15 @@ const typeOptions = [
   { label: '校友', value: 3 },
 ];
 
+const timeOptions = computed(() => {
+  let time = [];
+  for(let i=10; i<=180; i+=10) {
+    time.push({label: i+"", value: i+""});
+  }
+  return time;
+});
+
+// 表头
 const columns = [
   { title: '姓名', key: 'name' },
   { title: '性别', key: 'gender' },
@@ -85,6 +96,16 @@ const columns = [
   { title: '用户状态', key: 'walk_status' },
 ];
 
+// 分页配置
+const paginationReactive = reactive({
+  page: 2,
+  pageSize: 5,
+  onChange: (page: number) => {
+    paginationReactive.page = page
+  }
+})
+
+// 数据解析
 const tableData = computed(() => {
   const data = ref(routeData.value);
   if(!data.value) return data.value;
@@ -142,9 +163,15 @@ const submitForm = () => {
   const Data = getData();
   if(!Data) return;
 
+  loadingBar.start();
+
   useRequest(() => getTimeoutListAPI(Data),{
     onSuccess(res: any) {
       routeData.value = res.data.results;
+      loadingBar.finish();
+    },
+    onError() {
+      loadingBar.error();
     }
   })
 };
@@ -169,6 +196,7 @@ const viewTeam = () => {
   router.push("/team");
 };
 
+// 时间戳转化可读时间
 function formatReadingTime(timestamp: string) {
   if (!timestamp) return '';
   const date = new Date(timestamp);
