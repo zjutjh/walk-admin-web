@@ -11,6 +11,7 @@
                 <th>起点</th>
                 <th v-for="i in maxPoint">{{ i }}</th>
                 <th>终点</th>
+                <th>下撤人数</th>
             </tr>
         </thead>
         <tbody>
@@ -58,7 +59,7 @@ const maxPoint = computed(() => {
   if (!routeData.value) return 0;
   for (const route in routeData.value) {
     if (routeData.value[route].length > n) {
-      n = routeData.value[route].length - 3;
+      n = routeData.value[route].length - 4;
     }
   }
   return n;
