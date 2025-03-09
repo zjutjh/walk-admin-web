@@ -50,7 +50,7 @@ import router from '../../router';
 import { getTeamInfoAPI } from '../../apis';
 import useMainStore from '../../store';
 
-const STATUS = ["", "未开始", "进行中", "未完成", "完成", "扫码成功"];
+const STATUS = ["", "未开始", "进行中", "未完成", "完成", "进行中"];
 const ROUTE = ["", "朝晖路线", "屏峰半程", "屏峰全程", "莫干山半程", "莫干山全程"];
 
 const certificationStore = useMainStore().useCertificationStore();
@@ -108,7 +108,7 @@ const teamMemberInfo = computed(() => {
     switch(item.walk_status) {
       case 1: item.walk_status = "未开始";break;
       case 2: item.walk_status = "进行中";break;
-      case 3: item.walk_status = "扫码成功";break;
+      case 3: item.walk_status = "进行中";break;
       case 4: item.walk_status = "放弃";break;
       case 5: item.walk_status = "完成";break;
     }
