@@ -12,10 +12,8 @@
           </div>
 
           <n-button
-              v-if="showBackButton"
               type="default"
-              class="absolute top-4 right-4 transition-opacity duration-300"
-              :class="{ 'opacity-0': !showBackButton, 'opacity-100': showBackButton }"
+              class="absolute top-4 right-4"
               @click="goBack"
           >返回路线统计</n-button>
 
@@ -24,13 +22,14 @@
 
     <div class="flex-1 p-4 mx-8 relative">
         <h2 class="text-2xl font-bold mb-4">信息表格</h2>
+        <div class="font-light text-sm">点击表头项右侧横线，进行筛选。目前学院、团队状态、用户状态支持筛选</div>
         <div class="flex space-x-4">
           <a 
           v-for="table in tableData"
           :href="'#' + table.point"
           class="rounded-lg bg-blue-300 hover:bg-blue-500 p-2"
           >
-            <div>{{ table.point + ":" + table.location }}</div>
+            <div>{{ table.location }}</div>
           </a>
         </div>
         <div v-for="table in tableData" :id="table.point">
@@ -38,7 +37,7 @@
           <n-data-table
             :columns="columns"
             :data="table.users"
-            :pagination="paginationReactive"
+            :pagination="table.pagination"
           />
         </div>
 
@@ -101,8 +100,8 @@ const timeOptions = computed(() => {
 });
 
 // 表头过滤前置
-const statusFilterOption = ['未开始', '进行中', '扫码成功', '放弃', '完成'];
-const walkStatusFilterOption = ['未开始', '进行中', '未完成', '完成', '扫码成功'];
+const statusFilterOption = ['未开始', '进行中', '进行中', '放弃', '完成'];
+const walkStatusFilterOption = ['未开始', '进行中', '未完成', '完成', '进行中'];
 const collegeFilterOption = [
   '材料科学与工程学院',
   '地理信息学院', '法学院',
@@ -167,15 +166,6 @@ const columns = [
   },
 ];
 
-// 分页配置
-const paginationReactive = reactive({
-  page: 2,
-  pageSize: 5,
-  onChange: (page: number) => {
-    paginationReactive.page = page
-  }
-})
-
 // 数据解析
 const tableData = computed(() => {
   const data = ref(routeData.value);
@@ -194,7 +184,7 @@ const tableData = computed(() => {
       switch(item.walk_status) {
         case 1: item.walk_status = "未开始";break;
         case 2: item.walk_status = "进行中";break;
-        case 3: item.walk_status = "扫码成功";break;
+        case 3: item.walk_status = "进行中";break;
         case 4: item.walk_status = "放弃";break;
         case 5: item.walk_status = "完成";break;
       }
@@ -207,9 +197,17 @@ const tableData = computed(() => {
         case 2: item.status = "进行中";break;
         case 3: item.status = "未完成";break;
         case 4: item.status = "完成";break;
-        case 5: item.status = "扫码成功";break;
+        case 5: item.status = "进行中";break;
       }
       item.time = formatReadingTime(item.time);
+    });
+    // 为每个表格项添加独立的分页状态
+    tableData.pagination = reactive({
+      page: 1,
+      pageSize: 5,
+      onChange: (page: number) => {
+        tableData.pagination.page = page;
+      }
     });
   });
 
@@ -280,7 +278,6 @@ const handleScroll = () => {
   const scrollPosition = window.scrollY;
   const tablePosition = 400;
   showBackButton.value = scrollPosition > tablePosition;
-  console.log(scrollPosition);
 };
 
 onMounted(() => {

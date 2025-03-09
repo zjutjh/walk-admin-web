@@ -3,39 +3,20 @@
     <h1 class="text-3xl font-bold mb-4">路线信息展示</h1>
     
     <div v-if="routeData">
-      <n-table :single-line="false">
-        <thead>
+      <!-- 此处 v-show 用于隐藏莫干山半程统计信息 可以在必要时开启 -->
+      <n-table v-for="route in routeInfo" v-show="route[0] != 'mgsHalf'" :single-line="false" class="my-4">
+          <thead>
             <tr>
-                <th>路线</th>
-                <th>未到</th>
-                <th>起点</th>
-                <th v-for="i in maxPoint">{{ i }}</th>
-                <th>终点</th>
-                <th>下撤人数</th>
+              <th class="w-40">{{ route[1] }}</th>
+              <th v-for="point in routeData[route[0]]">{{ point.label }}</th>
             </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>朝晖路线</td>
-            <td v-for="num in routeData.zh">{{ num }}</td>
-          </tr>
-          <tr>
-            <td>屏峰半程</td>
-            <td v-for="num in routeData.pfHalf">{{ num }}</td>
-          </tr>
-          <tr>
-            <td>屏峰全程</td>
-            <td v-for="num in routeData.pfAll">{{ num }}</td>
-          </tr>
-          <tr>
-            <td>莫干山半程</td>
-            <td v-for="num in routeData.mgsHalf">{{ num }}</td>
-          </tr>
-          <tr>
-            <td>莫干山全程</td>
-            <td v-for="num in routeData.mgsAll">{{ num }}</td>
-          </tr>
-        </tbody>
+          </thead>
+          <tbody>
+            <tr>
+              <th>人数</th>
+              <td v-for="point in routeData[route[0]]">{{ point.count }}</td>
+            </tr>
+          </tbody>
       </n-table>
     </div>
 
@@ -47,23 +28,20 @@
 import { useRequest } from 'vue-hooks-plus';
 import { getRouteInfoAPI } from '../../apis';
 import useMainStore from '../../store';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import router from '../../router';
 import { NButton, NTable } from 'naive-ui';
 
 const certificationStore = useMainStore().useCertificationStore();
 const routeData = ref();
 
-const maxPoint = computed(() => {
-  let n = 0;
-  if (!routeData.value) return 0;
-  for (const route in routeData.value) {
-    if (routeData.value[route].length > n) {
-      n = routeData.value[route].length - 4;
-    }
-  }
-  return n;
-})
+const routeInfo = [
+  ['zh', '朝晖路线'],
+  ['pfHalf', '屏峰半程'],
+  ['pfAll', '屏峰全程'],
+  ['mgsHalf', '莫干山半程'],
+  ['mgsAll', '莫干山全程'],
+]
 
 onMounted(() => {
     useRequest(() => getRouteInfoAPI({
