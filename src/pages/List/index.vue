@@ -33,7 +33,7 @@
           </a>
         </div>
         <div v-for="table in tableData" :id="table.point">
-          <div class="font-bold text-lg">{{ table.point + ":" + table.location }}</div>
+          <div class="font-bold text-lg">{{ (table.point!=-1? table.point + ":" : "") + table.location }}</div>
           <n-data-table
             :columns="columns"
             :data="table.users"
@@ -100,7 +100,7 @@ const timeOptions = computed(() => {
 });
 
 // 表头过滤前置
-const statusFilterOption = ['未开始', '进行中', '进行中', '放弃', '完成'];
+const statusFilterOption = ['未开始', '进行中', '放弃', '完成']; // 进行中包括两种后端取值 进行中/扫码成功
 const walkStatusFilterOption = ['未开始', '进行中', '未完成', '完成', '进行中'];
 const collegeFilterOption = [
   '材料科学与工程学院',
