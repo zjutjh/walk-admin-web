@@ -33,7 +33,7 @@
           </a>
         </div>
         <div v-for="table in tableData" :id="table.point">
-          <div class="font-bold text-lg">{{ (table.point!=-1? table.point + ":" : "") + table.location }}</div>
+          <div class="font-bold text-lg">{{ table.location }}</div>
           <n-data-table
             :columns="columns"
             :data="table.users"
