@@ -28,7 +28,7 @@
 import { useRequest } from 'vue-hooks-plus';
 import { getRouteInfoAPI } from '../../apis';
 import useMainStore from '../../store';
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import router from '../../router';
 import { NButton, NTable } from 'naive-ui';
 
@@ -43,16 +43,27 @@ const routeInfo = [
   ['mgsAll', '莫干山全程'],
 ]
 
+const { run: loadRouteInfo, cancel } = useRequest(
+  () => getRouteInfoAPI({ secret: certificationStore.getSecret() }),
+  {
+    manual: true,
+    pollingInterval: 30000, // 每 10 秒刷新一次
+    onSuccess: (res: any) => {
+      // console.log("refresh")
+      routeData.value = res.data;
+      // console.log(routeData.value);
+    },
+  },
+);
+
+
 onMounted(() => {
-    useRequest(() => getRouteInfoAPI({
-        secret: certificationStore.getSecret(),
-    }), {
-        onSuccess: (res: any) => {
-            routeData.value = res.data;
-            console.log(routeData.value);
-        }
-    });
+  loadRouteInfo();
 });
+
+onBeforeUnmount(() => {
+  cancel();
+})
 
 const viewList = () => {
   router.push("/list");
